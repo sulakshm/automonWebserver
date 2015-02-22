@@ -1,0 +1,5 @@
+<form action="{% url 'gps:delete' gpsnode.id %}" method="post">
+  {% csrf_token %}
+  {{ gpsnode }}
+  <input type="submit" value="Submit"/>
+</form>

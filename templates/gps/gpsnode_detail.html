@@ -1,0 +1,32 @@
+<h1>{{ gpsnode.ident }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<a href="{% url 'gps:update' gpsnode.id %}">Add metrics...</a>
+
+{% if gpsnode.gpsnodemetrics_set.all %}
+  <table>
+
+  <tr>
+    <th> VIN </th>
+    <th> VINCached </th>
+    <th> Latitude </th>
+    <th> Longitude </th>
+    <th> Accuracy </th>
+    <th> Speed </th>
+    <th> Altitude </th>
+    <th> Timestamp(nsecs) </th>
+    <th> Bearing </th>
+  </tr>
+
+  {% for metric in gpsnode.gpsnodemetrics_set.all %}
+      <tr>
+      {% for f in metric.get_all_fields %}
+        <td> {{ f.value | escape }} </td>
+      {% endfor %}
+      </tr>
+  {% endfor %}
+  </table>
+{% else %}
+  GpsNodeMetrics is empty.
+{% endif %}

@@ -1,0 +1,22 @@
+{% if nodes %}
+    <table> 
+        <tr>
+            <th>Identifier</th>
+            <th>Owner</th>
+            <th>Created</th>
+            <th>LastActive</th>
+            <th>Recently Active?</th>
+        </tr>
+    {% for node in nodes %}
+        <tr>
+        <td><a href="{% url 'gps:detail' node.id %}">{{ node.ident }}</a></td>
+        <td>{{ node.user }}</td>
+        <td>{{ node.created }}</td>
+        <td>{{ node.lastActive }}</td>
+        <td>{{ node.was_active_recently }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No Gps Nodes are available.</p>
+{% endif %}
