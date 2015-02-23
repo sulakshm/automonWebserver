@@ -2,39 +2,45 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView, FormView
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.forms import ModelForm
 
 from gps.models import GpsNode, GpsNodeMetrics
 
 class GpsNodeCreate(CreateView):
     model = GpsNode
-    fields = ['ident', 'user']
+    fields = ['ident']
     success_url = reverse_lazy('gps:index')
+
+    def form_valid(self, form):
+        # bind user into newly created node
+        node = form.instance
+        user = self.request.user
+        node.user = user
+        return super(GpsNodeCreate, self).form_valid(form)
 
 class GpsNodeDelete(DeleteView):
     model = GpsNode
     success_url = reverse_lazy('gps:index')
 
-# Create your views here.
+    def get_object(self, queryset=None):
+        obj = super(GpsNodeDelete, self).get_object(queryset)
+        if not obj.user == self.request.user:
+            raise Http404
+        return obj 
+
 class GpsNodesListView(ListView):
     model = GpsNode
     template_name = 'gps/gpsnode_list.html'
     context_object_name = 'nodes'
 
     def get_queryset(self):
-        return GpsNode.objects.order_by('-lastActive')
+        return GpsNode.objects.filter(user=self.request.user)
 
 class GpsNodeDetailView(DetailView):
     model = GpsNode
     template_name = 'gps/gpsnode_detail.html'
 
-"""
-def GpsNodeUpdateView(request, pk):
-    from django.http import HttpResponse
-    return HttpResponse('Update not implemented yet for GpsNode %r.' % pk)
-
-"""
-from django.forms import ModelForm
 
 class MetricsForm(ModelForm):
     class Meta:
@@ -42,53 +48,27 @@ class MetricsForm(ModelForm):
         fields = ['vin', 'vinCached', 'latitude', 'longitude',
                   'accuracy', 'speed', 'altitude', 'nsTimestamp',
                   'bearing']
-        """
-        fields = ['node', 'vin', 'vinCached', 
-                  'latitude', 'longitude', 'accuracy',
-                  'speed', 'altitude', 'nsTimestamp',
-                  'bearing']
-        """
 
-from django.http import HttpResponse
 def GpsNodeUpdateView(request, pk=None):
     node = get_object_or_404(GpsNode, pk=pk)
     if request.method == 'POST':
         form = MetricsForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and node.user == request.user:
             print 'MetricsForm is valid'
             c = form.save(commit=False)
             c.node = node
             c.save()
             url = '/gps/%s/detail' % pk
             return HttpResponseRedirect(url)
-            #return render(request, 'gps/gpsnode_detail.html', 
-            #                    {'gpsnode' : node})
         else:
             return render(request, 'gps/gpsnode_update.html',
                             {'node' : node, 'pk' : pk, 'form' : form,
                              'error_message' : 'Invalid form submitted'})
+    elif node.user != request.user:
+        print 'user %r has no record for this node - %r' % (request.user, node.user)
+        raise Http404('User has no such record.')
     else:
         form = MetricsForm()
         return render(request, 'gps/gpsnode_update.html', 
                         {'node' : node, 'pk' : pk, 'form' : form})
 
-""""
-class GpsNodeUpdateView(FormView):
-    form_class = MetricsForm
-    #success_url = "gps:detail"
-    template_name = 'gps/gpsnode_update.html'
-
-    def get_context_data(self, **kwargs):
-        data = super(GpsNodeUpdateView, self).get_context_data(**kwargs)
-        print 'updateView form arg %r' % data
-        import pdb; pdb.set_trace()
-        myform = data['form']
-        myview = data['view']
-        #mynode = myform.node
-        #mynode = getattr(myform, 'node', None)
-        print 'root node: %r, view %r' % (myform, myview)
-        return data
-
-    def get_success_url(self):
-        return reverse('gps:update', kwargs={'pk':self.id})
-"""
