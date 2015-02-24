@@ -1,11 +1,6 @@
 {% if user.is_authenticated %}
     <p>Welcome, {{ user.get_username }}. Thanks for logging in.</p>
-
-<h1>{{ node }}</h1>
-
-{% if error_message %} {{ error_message }} {% endif %}
-
-<form action="{% url 'gps:update' pk %}" method="post">
+<form action="{% url 'gps:add' %}" method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <input type="submit" value="Submit"/>
@@ -13,3 +8,4 @@
 {% else %}
     <p>Welcome, new user. Please log in.</p>
 {% endif %}
+

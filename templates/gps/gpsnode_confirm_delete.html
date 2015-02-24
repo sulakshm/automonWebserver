@@ -1,5 +1,12 @@
+{% if user.is_authenticated %}
+    <p>Active User: {{ user.get_username }}. Thanks for logging in.</p>
+
 <form action="{% url 'gps:delete' gpsnode.id %}" method="post">
   {% csrf_token %}
   {{ gpsnode }}
   <input type="submit" value="Submit"/>
 </form>
+
+{% else %}
+    <p>Anonymous user, cannot perform this action.</p>
+{% endif %}

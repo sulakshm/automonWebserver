@@ -1,0 +1,9 @@
+{% if error_message %} error_message {% endif %}
+<form action='/gps/login/' method='post'>
+    {% csrf_token %}
+    <label for="your_name"> Login name: </label>
+    <input id="your_name" type="text" name="your_name" value="{{ current_name }}">
+    <label for="your_passwd"> Login password: </label>
+    <input id="your_passwd" type="password" name="your_passwd" value="{{ current_passwd }}">
+    <input type="submit" value="Login">
+</form>
