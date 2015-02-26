@@ -12,5 +12,5 @@ urlpatterns = patterns('',
     url(r'delete/(?P<pk>\d+)/$', views.GpsNodeDelete.as_view(), name='delete'),
     url(r'modify/(?P<pk>\d+)/$', views.GpsNodeUpdate.as_view(), name='modify'),
     url(r'^(?P<pk>\d+)/detail/$', views.GpsNodeDetailView.as_view(), name='detail'),
-    url(r'^(?P<pk>\d+)/update/$', views.GpsNodeUpdateView, name='update'),
+    url(r'^(?P<pk>\d+)/metricsAdd/$', views.GpsNodeMetricsAdd, name='update'),
 )

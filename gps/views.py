@@ -105,11 +105,11 @@ class MetricsForm(ModelForm):
                   'accuracy', 'speed', 'altitude', 'nsTimestamp',
                   'bearing']
 
-def GpsNodeUpdateView(request, pk=None):
+def GpsNodeMetricsAdd(request, pk=None):
     node = get_object_or_404(GpsNode, pk=pk)
     if request.method == 'POST':
         form = MetricsForm(request.POST)
-        if form.is_valid() and node.user == request.user.id:
+        if form.is_valid() and node.user.id == request.user.id:
             print 'MetricsForm is valid'
             c = form.save(commit=False)
             c.node = node
@@ -120,7 +120,7 @@ def GpsNodeUpdateView(request, pk=None):
             return render(request, 'gps/gpsnode_update.html',
                             {'node' : node, 'pk' : pk, 'form' : form,
                              'error_message' : 'Invalid form submitted'})
-    elif node.user != request.user.id:
+    elif node.user.id  != request.user.id:
         print 'user %r has no record for this node - %r' % (request.user, node.user)
         raise Http404('User has no such record.')
     else:
