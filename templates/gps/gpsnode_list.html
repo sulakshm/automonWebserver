@@ -1,9 +1,5 @@
 {% if user.is_authenticated %}
     <p>Welcome, {{ user.get_username }}. Thanks for logging in.</p>
-{% else %}
-    <p>Welcome, new user. Please log in.</p>
-{% endif %}
-
 {% if nodes %}
     <table> 
         <tr>
@@ -26,3 +22,9 @@
 {% else %}
     <p>No Gps Nodes are available.</p>
 {% endif %}
+
+<a href="{% url 'gps:appLogout' %}">Logout user, {{ user.get_username }}</a>
+{% else %}
+    <p>Welcome, new user. Please log in.</p>
+{% endif %}
+

@@ -1,0 +1,11 @@
+{% if user.is_authenticated %}
+    <p>Hello User: {{ user.get_username }}, please confirm logout.</p>
+
+<form action="{% url 'gps:appLogout' %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Click to logout."/>
+</form>
+
+{% else %}
+    <p>Anonymous user, cannot perform this action.</p>
+{% endif %}

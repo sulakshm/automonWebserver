@@ -51,7 +51,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'automon.urls'
-
+LOGIN_URL='/gps/login'
 WSGI_APPLICATION = 'automon.wsgi.application'
 
 

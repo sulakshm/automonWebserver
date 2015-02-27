@@ -4,6 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView, FormView
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.forms import ModelForm
+from django.contrib.auth import authenticate, login, logout
 
 from gps.models import GpsNode, GpsNodeMetrics
 
@@ -23,9 +24,9 @@ def appDefault(request):
     #return HttpResponseRedirect(request, 'gps:login')
     return HttpResponseRedirect('/gps/login')
 
-from django.contrib.auth import authenticate
 def appLogin(request):
    """ Handles application login """
+   error_msg = ''
    if request.method == 'POST':
        myuser = request.POST['your_name']
        mypasswd = request.POST['your_passwd']
@@ -34,13 +35,21 @@ def appLogin(request):
        if user is not None:
            if user.is_active:
                print "User is valid, active"
+               login(request, user)
                return HttpResponseRedirect('/gps')
            else:
-               print "User account disabled"
+               error_msg="User account disabled"
        else:
-           print "User/password combination is not correct"
-       return HttpResponse('This is not handled yet..')
-   return render(request, 'gps/gpsnode_login.html', {})
+           error_msg="User/password combination is not correct"
+   return render(request, 'gps/gpsnode_login.html', 
+                   {'error_message' : error_msg})
+
+def appLogout(request):
+    """ Handles application logout """
+    if request.method == 'POST':
+       logout(request)
+       return render(request, 'gps/gpsnode_login.html', {})
+    return render(request, 'gps/gpsnode_confirm_logout.html', {})
 
 class GpsNodeCreate(CreateView):
     model = GpsNode

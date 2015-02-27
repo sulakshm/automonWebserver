@@ -1,0 +1,11 @@
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.get_username }}. Thanks for logging in.</p>
+<form action="{% url 'gps:modify' gpsnode.id %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Update"/>
+</form>
+{% else %}
+    <p>Welcome, new user. Please log in.</p>
+{% endif %}
+

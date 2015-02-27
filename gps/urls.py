@@ -8,6 +8,7 @@ urlpatterns = patterns('',
 
     url(r'^$', views.GpsNodesListView.as_view(), name='index'),
     url(r'^login/$', views.appLogin, name='appLogin'),
+    url(r'^logout/$', views.appLogout, name='appLogout'),
     url(r'add/$', views.GpsNodeCreate.as_view(), name='add'),
     url(r'delete/(?P<pk>\d+)/$', views.GpsNodeDelete.as_view(), name='delete'),
     url(r'modify/(?P<pk>\d+)/$', views.GpsNodeUpdate.as_view(), name='modify'),
